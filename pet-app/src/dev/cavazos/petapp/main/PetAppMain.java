@@ -6,8 +6,6 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 
-import dev.cavazos.petapp.data.FileAccessObject;
-
 // classes are blueprints for objects
 public class PetAppMain {
 		// public: accessible anywhere
@@ -21,9 +19,9 @@ public class PetAppMain {
 			//controlFlow();
 			objectClass();
 			
-			//Object obj = null;
-			//if (obj != null)
-			//	obj.hashCode();
+//			Object obj = null;
+//			if (obj != null)
+//				obj.hashCode();
 			
 			petApp();
 			
