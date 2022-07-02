@@ -3,6 +3,7 @@ package dev.cavazos.petapp;
 import java.util.Scanner;
 
 import dev.cavazos.ds.List;
+import dev.cavazos.exceptions.AlreadyAdoptedException;
 import dev.cavazos.exceptions.UsernameAlreadyExistsException;
 import dev.cavazos.models.Pet;
 import dev.cavazos.models.User;
@@ -148,7 +149,12 @@ public class PetAppDriver {
 					System.out.println("Adopt " + pet.getName() + "? y/n");
 					input = scanner.nextLine().toLowerCase();
 					if ("y".equals(input)) {
-						user = userService.adoptPet(pet, user);
+						try {
+							user = userService.adoptPet(pet, user);
+						} catch (AlreadyAdoptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						System.out.println("Thanks for adopting " + pet.getName() + "! "
 								+ "They're so excited!");
 					} else {

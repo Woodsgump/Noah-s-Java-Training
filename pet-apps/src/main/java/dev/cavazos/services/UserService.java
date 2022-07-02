@@ -1,6 +1,7 @@
 package dev.cavazos.services;
 
 import dev.cavazos.ds.List;
+import dev.cavazos.exceptions.AlreadyAdoptedException;
 import dev.cavazos.exceptions.UsernameAlreadyExistsException;
 import dev.cavazos.models.Pet;
 import dev.cavazos.models.User;
@@ -43,6 +44,7 @@ public interface UserService {
 	 * @param pet the pet to be adopted
 	 * @param user the user who is adopting the pet
 	 * @return the user with their newly adopted pet in their pets list
+	 * @throws AlreadyAdoptedException 
 	 */
-	public User adoptPet(Pet pet, User user);
+	public User adoptPet(Pet pet, User user) throws AlreadyAdoptedException;
 }

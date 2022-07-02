@@ -165,23 +165,127 @@ public class PetPostgres implements PetDAO {
 
 	//DML
 	@Override
-	public void update(Pet t) {
-		// TODO Auto-generated method stub
-		
+	public void update(Pet pet) {
+		try (Connection conn = connUtil.getConnection()) {
+			// because this is a transaction (DML), we'll start by
+			// setting autocommit to false
+			conn.setAutoCommit(false);
+			
+			String sql = "update pet "
+					+ "set name=?, "
+					+ "age=?, "
+					+ "species_id=?, "
+					+ "description=?, "
+					+ "status_id=? "
+					+ "where id=?";
+			
+			PreparedStatement stmt = conn.prepareStatement(sql);
+			stmt.setString(1, pet.getName());
+			stmt.setInt(2, pet.getAge());
+			stmt.setInt(3, pet.getSpecies().getId());
+			stmt.setString(4, pet.getDescription());
+			stmt.setInt(5, pet.getStatus().getId());
+			stmt.setInt(6, pet.getId());
+			
+			int rowsAffected = stmt.executeUpdate();
+			if (rowsAffected<=1) {
+				conn.commit();
+			} else {
+				conn.rollback();
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	//DML
 	@Override
-	public void delete(Pet t) {
-		// TODO Auto-generated method stub
-		
+	public void delete(Pet pet) {
+		try (Connection conn = connUtil.getConnection()) {
+			// because this is a transaction (DML), we'll start by
+			// setting autocommit to false
+			conn.setAutoCommit(false);
+			
+			String sql = "update pet "
+					+ "set name=?, "
+					+ "age=?, "
+					+ "species_id=?, "
+					+ "description=?, "
+					+ "status_id=? "
+					+ "where id=?";
+			
+			PreparedStatement stmt = conn.prepareStatement(sql);
+			stmt.setString(1, pet.getName());
+			stmt.setInt(2, pet.getAge());
+			stmt.setInt(3, pet.getSpecies().getId());
+			stmt.setString(4, pet.getDescription());
+			stmt.setInt(5, pet.getStatus().getId());
+			stmt.setInt(6, pet.getId());
+			
+			int rowsAffected = stmt.executeUpdate();
+			if (rowsAffected<=1) {
+				conn.commit();
+			} else {
+				conn.rollback();
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
-	//DML
+	
 	@Override
-	public List<Pet> findByStatus(String status) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public List<Pet> findByStatus(Status status) {
+List<Pet> pets = new ArrayList<>();
+		
+		// try-with-resources: sets up closing for closeable resources
+		try (Connection conn = connUtil.getConnection()) {
+			// set up the SQL statement that we want to execute
+			String sql = "select pet.id, " 
+					+ "pet.name, " 
+					+ "age, " 
+					+ "pet.description, "
+					+ "status.name as status_name, "
+					+ "species.id as species_id, " 
+					+ "species.name as species_name, "
+					+ "species.description as species_description " 
+					+ "from pet "
+					+ "join species on pet.species_id = species.id " 
+					+ "join status on pet.status_id = status.id "
+					+ "where pet.status_id = ?";
 
+			PreparedStatement stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, status.getId());
+
+			ResultSet resultSet = stmt.executeQuery();
+
+			while (resultSet.next()) {
+				int id = resultSet.getInt("id");
+				String name = resultSet.getString("name");
+				int age = resultSet.getInt("age");
+				String description = resultSet.getString("description");
+				
+				status = new Status(resultSet.getInt("status_id"),
+						resultSet.getString("status_name"));
+				
+				Species species = new Species(
+						resultSet.getInt("species_id"),
+						resultSet.getString("species_name"),
+						resultSet.getString("species_description"));
+
+				Pet pet = new Pet(name, age, species, description);
+				pet.setId(id);
+				pet.setStatus(status);
+				
+				pets.add(pet);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return pets;
+	}
 }
